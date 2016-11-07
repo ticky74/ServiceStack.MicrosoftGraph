@@ -1,0 +1,28 @@
+{
+  "version": "1.0.0-*",
+  "testRunner": "xunit",
+  "dependencies": {
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
+    "Microsoft.NETCore.App": "1.1.0-preview1-001100-00",
+    "Moq": "4.6.38-alpha",
+    "NETStandard.Library": "1.6.1-preview1-24530-04",
+    "ServiceStack.Azure": "1.0.0-*",
+    "ServiceStack.Azure.ServiceModel": "1.0.0-*",
+    "ServiceStack.OrmLite.Sqlite.Core": "1.0.27",
+    "System.Collections.Specialized": "4.3.0-preview1-24530-04",
+    "System.IdentityModel.Tokens.Jwt": "5.0.1-pre-310121323",
+    "xunit": "2.2.0-beta4-build3444"
+  },
+  "runtimes": {
+    "win10-x64": {}
+  },
+  "frameworks": {
+    "netcoreapp1.1": {
+      "imports": [
+        "portable-net45+win8"
+      ],
+      "dependencies": {
+      }
+    }
+  }
+}
