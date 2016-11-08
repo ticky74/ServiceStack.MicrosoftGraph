@@ -1,1 +1,1 @@
-# ServiceStack.Azure
+# ServiceStack.MicrosoftGraph
