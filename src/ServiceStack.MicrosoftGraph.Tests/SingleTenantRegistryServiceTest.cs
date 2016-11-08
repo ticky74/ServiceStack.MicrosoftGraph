@@ -3,7 +3,7 @@ using ServiceStack.Azure.Auth;
 using ServiceStack.MicrosoftGraph.ServiceModel.Entities;
 using Xunit;
 
-namespace ServiceStack.Azure.Tests
+namespace ServiceStack.MicrosoftGraph.Tests
 {
     public class SingleTenantRegistryServiceTest
     {

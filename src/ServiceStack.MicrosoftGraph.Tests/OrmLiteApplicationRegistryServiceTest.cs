@@ -5,7 +5,7 @@ using ServiceStack.MicrosoftGraph.ServiceModel.Entities;
 using ServiceStack.OrmLite;
 using Xunit;
 
-namespace ServiceStack.Azure.Tests
+namespace ServiceStack.MicrosoftGraph.Tests
 {
     public class OrmLiteApplicationRegistryServiceTest
     {

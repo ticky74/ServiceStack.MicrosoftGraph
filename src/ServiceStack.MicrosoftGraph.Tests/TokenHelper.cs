@@ -6,7 +6,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using Xunit;
 
-namespace ServiceStack.Azure.Tests
+namespace ServiceStack.MicrosoftGraph.Tests
 {
     public class TokenHelper
     {

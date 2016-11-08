@@ -6,7 +6,7 @@ using ServiceStack.MicrosoftGraph.ServiceModel.Requests;
 using ServiceStack.OrmLite;
 using Xunit;
 
-namespace ServiceStack.Azure.Tests
+namespace ServiceStack.MicrosoftGraph.Tests
 {
     public class GraphAuthServiceTest
     {

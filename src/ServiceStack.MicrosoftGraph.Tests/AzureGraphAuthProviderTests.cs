@@ -12,7 +12,7 @@ using ServiceStack.Testing;
 using ServiceStack.Web;
 using Xunit;
 
-namespace ServiceStack.Azure.Tests
+namespace ServiceStack.MicrosoftGraph.Tests
 {
     public class AzureGraphAuthProviderTests : IDisposable
     {

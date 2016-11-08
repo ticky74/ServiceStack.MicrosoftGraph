@@ -4,7 +4,7 @@ using ServiceStack.MicrosoftGraph.ServiceModel.Entities;
 using ServiceStack.MicrosoftGraph.ServiceModel.Interfaces;
 using ServiceStack.MicrosoftGraph.ServiceModel.Requests;
 
-namespace ServiceStack.Azure.Tests
+namespace ServiceStack.MicrosoftGraph.Tests
 {
     public class TestAzureGraphService : IAzureGraphService
     {
