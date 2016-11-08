@@ -46,7 +46,7 @@ namespace ServiceStack.Azure.Auth
 
         #region Constructors
 
-        public SingleTenantApplicationRegistryService(AzureDirectorySettings settings)
+        public SingleTenantApplicationRegistryService(MicrosoftGraphDirectorySettings settings)
         {
             _registration = new ApplicationRegistration
             {

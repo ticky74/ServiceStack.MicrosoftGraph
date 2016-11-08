@@ -6,7 +6,7 @@ using ServiceStack.MicrosoftGraph.ServiceModel.Requests;
 
 namespace ServiceStack.Azure.Auth
 {
-    public class GraphAuthService : Service
+    public class MicrosoftGraphAuthService : Service
     {
         #region Constants and Variables
 
@@ -24,7 +24,7 @@ namespace ServiceStack.Azure.Auth
 
         #region Constructors
 
-        public GraphAuthService(IApplicationRegistryService registry)
+        public MicrosoftGraphAuthService(IApplicationRegistryService registry)
         {
             _registry = registry;
         }

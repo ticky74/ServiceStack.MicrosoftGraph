@@ -43,7 +43,7 @@ namespace ServiceStack.MicrosoftGraph.Tests
             {
                 Username = "someuser@foodomain.com"
             };
-            var service = new GraphAuthService(_registrationService);
+            var service = new MicrosoftGraphAuthService(_registrationService);
 
             var result = service.Post(check);
 
@@ -59,7 +59,7 @@ namespace ServiceStack.MicrosoftGraph.Tests
             {
                 Username = "someuser@foodomain2.com"
             };
-            var service = new GraphAuthService(_registrationService);
+            var service = new MicrosoftGraphAuthService(_registrationService);
 
             var result = service.Post(check);
 
@@ -80,7 +80,7 @@ namespace ServiceStack.MicrosoftGraph.Tests
             {
                 Username = value
             };
-            var service = new GraphAuthService(_registrationService);
+            var service = new MicrosoftGraphAuthService(_registrationService);
 
             var result = Assert.Throws<HttpError>(() => service.Post(check));
             Assert.NotNull(result);

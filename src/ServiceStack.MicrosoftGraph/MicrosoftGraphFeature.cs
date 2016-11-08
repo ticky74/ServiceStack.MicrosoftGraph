@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace ServiceStack.Azure
 {
-    public class AzureGraphFeature : IPlugin
+    public class MicrosoftGraphFeature : IPlugin
     {
         public void Register(IAppHost appHost)
         {
-            appHost.RegisterServicesInAssembly(typeof(AzureGraphFeature).GetAssembly());
+            appHost.RegisterServicesInAssembly(typeof(MicrosoftGraphFeature).GetAssembly());
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace ServiceStack.Azure.Auth
 {
-    public class AzureDirectorySettings
+    public class MicrosoftGraphDirectorySettings
     {
         #region Properties and Indexers
 

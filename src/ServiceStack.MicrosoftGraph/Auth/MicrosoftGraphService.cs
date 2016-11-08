@@ -7,7 +7,7 @@ using ServiceStack.Text;
 
 namespace ServiceStack.Azure.Auth
 {
-    public class AzureGraphService : IAzureGraphService
+    public class MicrosoftGraphService : IAzureGraphService
     {
         #region Public/Internal
 

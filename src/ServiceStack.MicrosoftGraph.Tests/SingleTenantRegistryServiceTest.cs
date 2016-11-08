@@ -9,7 +9,7 @@ namespace ServiceStack.MicrosoftGraph.Tests
     {
         #region Constants and Variables
 
-        private readonly AzureDirectorySettings _directorySettings;
+        private readonly MicrosoftGraphDirectorySettings _directorySettings;
         private const string AppId = "e7319d8d-bf2b-4aca-a794-8a9f949ef80b";
         private const string PublicKey = "8ccdacd6a78a4b3891c3097c16fe29bb";
         private const string DirectoryName = "foo.onmicrosoft.com";
@@ -20,7 +20,7 @@ namespace ServiceStack.MicrosoftGraph.Tests
 
         public SingleTenantRegistryServiceTest()
         {
-            _directorySettings = new AzureDirectorySettings
+            _directorySettings = new MicrosoftGraphDirectorySettings
             {
                 ClientSecret = PublicKey,
                 ClientId = AppId,

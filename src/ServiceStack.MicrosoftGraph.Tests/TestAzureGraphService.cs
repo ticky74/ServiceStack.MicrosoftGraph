@@ -23,7 +23,7 @@ namespace ServiceStack.MicrosoftGraph.Tests
         public AuthCodeRequestData RequestAuthCode(AuthCodeRequest codeRequest)
         {
             // RequestAuthCode
-            return new AzureGraphService().RequestAuthCode(codeRequest);
+            return new MicrosoftGraphService().RequestAuthCode(codeRequest);
         }
 
         public Me Me(string authToken)

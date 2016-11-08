@@ -14,7 +14,7 @@ using ServiceStack.Web;
 
 namespace ServiceStack.Azure.Auth
 {
-    public class AzureAuthenticationProvider : OAuthProvider
+    public class MicrosoftGraphAuthenticationProvider : OAuthProvider
     {
         #region Constants and Variables
 
@@ -25,22 +25,22 @@ namespace ServiceStack.Azure.Auth
 
         #region Constructors
 
-        public AzureAuthenticationProvider()
-            : this(new AzureGraphService())
+        public MicrosoftGraphAuthenticationProvider()
+            : this(new MicrosoftGraphService())
         {
         }
 
-        public AzureAuthenticationProvider(IAzureGraphService graphService)
+        public MicrosoftGraphAuthenticationProvider(IAzureGraphService graphService)
             : this(new AppSettings(), graphService)
         {
         }
 
-        public AzureAuthenticationProvider(IAppSettings settings, IAzureGraphService graphService)
+        public MicrosoftGraphAuthenticationProvider(IAppSettings settings, IAzureGraphService graphService)
             : base(settings, MsGraph.Realm, MsGraph.ProviderName, "ClientId", "ClientSecret")
         {
             // Default Scopes. Not sure if this is a bad idea @ticky74
             Scopes = new[] {"User.Read", "offline_access", "openid", "profile"};
-            _graphService = graphService ?? new AzureGraphService();
+            _graphService = graphService ?? new MicrosoftGraphService();
             AppSettings = settings;
             if (ServiceStackHost.Instance != null)
                 RegisterProviderService(ServiceStackHost.Instance);
@@ -167,7 +167,7 @@ namespace ServiceStack.Azure.Auth
 
         private static void RegisterProviderService(IAppHost host)
         {
-            host.RegisterService(typeof(GraphAuthService));
+            host.RegisterService(typeof(MicrosoftGraphAuthService));
         }
 
         private object RequestAccessToken(IServiceBase authService, IAuthSession session, string code,
