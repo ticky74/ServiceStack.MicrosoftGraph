@@ -3,10 +3,9 @@
   "version": "1.0.0-*",
 
   "dependencies": {
-    "NETStandard.Library": "1.6.0",
-    "System.Collections.Specialized": "4.0.1",
-    "ServiceStack.Interfaces.Core": "1.0.27",
-    "ServiceStack.OrmLite.Core": "1.0.27"
+    "NETStandard.Library": "1.6.1",
+    "ServiceStack.Interfaces.Core": "1.0.30",
+    "System.Collections.Specialized": "4.3.0"
   },
 
   "frameworks": {
@@ -20,7 +19,6 @@
         "portable-net452+win81"
       ],
       "dependencies": {
-        "Microsoft.NETCore.App": "1.0.1"
       }
     }
   }

@@ -2,12 +2,11 @@
   "version": "1.0.0-*",
 
   "dependencies": {
-    "NETStandard.Library": "1.6.0",
     "ServiceStack.MicrosoftGraph.ServiceModel": "1.0.0-*",
-    "ServiceStack.Server.Core": "1.0.27",
-    "Microsoft.IdentityModel.Logging": "1.0.0",
-    "Microsoft.IdentityModel.Tokens": "5.0.0",
-    "System.IdentityModel.Tokens.Jwt": "5.0.0"
+    "Microsoft.IdentityModel.Logging": "1.1.0",
+    "ServiceStack.Server.Core": "1.0.30",
+    "System.IdentityModel.Tokens.Jwt": "5.1.0",
+    "NETStandard.Library": "1.6.1"
   },
 
   "frameworks": {
@@ -21,7 +20,7 @@
         "portable-net452+win81"
       ],
       "dependencies": {
-        "Microsoft.NETCore.App": "1.0.1"
+        "Microsoft.NETCore.App": "1.1.0"
       }
     }
   }
