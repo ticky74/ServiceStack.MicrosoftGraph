@@ -90,7 +90,8 @@ namespace ServiceStack.Azure.Auth
                     ClientSecret = publicKey,
                     DirectoryName = directoryName,
                     RefId = refId,
-                    RefIdStr = refIdStr
+                    RefIdStr = refIdStr,
+                    AppTenantId = Guid.NewGuid().ToString("N").ToLower()
                 }, true);
 
                 return db.Single<ApplicationRegistration>(d => d.Id == id);
