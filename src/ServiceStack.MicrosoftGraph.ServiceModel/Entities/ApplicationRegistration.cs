@@ -1,3 +1,6 @@
+using System;
+using ServiceStack.DataAnnotations;
+
 namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
 {
     public class ApplicationRegistration : Model.IHasLongId
@@ -21,6 +24,11 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
         public string RefIdStr { get; set; }
 
         public ulong RowVersion { get; set; }
+
+        [Required]
+        [StringLength(48)]
+        [Index(Unique = true)]
+        public Guid AppTenantId { get; set; }
 
         #endregion
 

@@ -42,8 +42,10 @@ namespace ServiceStack.Azure.Auth
             Scopes = new[] {"User.Read", "offline_access", "openid", "profile"};
             _graphService = graphService ?? new MicrosoftGraphService();
             AppSettings = settings;
-            if (ServiceStackHost.Instance != null)
-                RegisterProviderService(ServiceStackHost.Instance);
+
+            if (ServiceStackHost.Instance == null) return;
+            if (ServiceStackHost.Instance.TryResolve<MicrosoftGraphAuthService>() == null)
+                RegisterProviderSupportServices(ServiceStackHost.Instance);
         }
 
         #endregion
@@ -165,9 +167,11 @@ namespace ServiceStack.Azure.Auth
 
         #region Private
 
-        private static void RegisterProviderService(IAppHost host)
+        internal static void RegisterProviderSupportServices(IAppHost host)
         {
-            host.RegisterService(typeof(MicrosoftGraphAuthService));
+            if (host == null) return;
+            if (host.TryResolve<MicrosoftGraphAuthService>() == null)
+                host.RegisterService(typeof(MicrosoftGraphAuthService));
         }
 
         private object RequestAccessToken(IServiceBase authService, IAuthSession session, string code,

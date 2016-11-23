@@ -1,5 +1,6 @@
 using System;
 using ServiceStack.Data;
+using ServiceStack.MicrosoftGraph.ServiceModel;
 using ServiceStack.MicrosoftGraph.ServiceModel.Entities;
 using ServiceStack.MicrosoftGraph.ServiceModel.Interfaces;
 using ServiceStack.OrmLite;
@@ -90,7 +91,8 @@ namespace ServiceStack.Azure.Auth
                     ClientSecret = publicKey,
                     DirectoryName = directoryName,
                     RefId = refId,
-                    RefIdStr = refIdStr
+                    RefIdStr = refIdStr,
+                    AppTenantId = SequentialGuid.Create()
                 }, true);
 
                 return db.Single<ApplicationRegistration>(d => d.Id == id);
