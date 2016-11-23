@@ -37,8 +37,7 @@
         "ServiceStack.MicrosoftGraph.ServiceModel": "1.0.0-*",
         "Microsoft.IdentityModel.Logging": "1.1.0",
         "ServiceStack.Server": "4.5.2",
-        "System.IdentityModel.Tokens.Jwt": "5.1.0",
-        "Microsoft.NETCore.Portable.Compatibility": "1.0.1"
+        "System.IdentityModel.Tokens.Jwt": "5.1.0"
       },
       "frameworkAssemblies": {
         "System.Data": "4.0.0.0"

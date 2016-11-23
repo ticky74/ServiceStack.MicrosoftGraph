@@ -1,7 +1,6 @@
 # <img src="docs/Icon.jpeg" width="51" height="40" /> ServiceStack.MicrosoftGraph
 
-[![perimeter9 MyGet Build Status](https://www.myget.org/BuildSource/Badge/perimeter9?identifier=cde150f5-6369-476d-9d57-45ae14af0572)](https://www.myget.org/)
-
+[![kode4 MyGet Build Status](https://www.myget.org/BuildSource/Badge/kode4?identifier=177a5090-3be9-4a2e-89a2-4a7504da38f1)](https://www.myget.org/)
 Microsoft Graph Authentication for ServiceStack
 
 ### Thanks
