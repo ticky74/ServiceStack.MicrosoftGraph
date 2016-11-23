@@ -15,16 +15,6 @@
         "System.Collections.Specialized": "4.3.0"
       }
     },
-    "netcoreapp1.1": {
-      "imports": [
-        "portable-net452+win81"
-      ],
-      "dependencies": {
-        "NETStandard.Library": "1.6.1",
-        "ServiceStack.Interfaces.Core": "1.0.30",
-        "System.Collections.Specialized": "4.3.0"
-      }
-    },
     "net462": {
       "dependencies": {
         "ServiceStack.Interfaces": "4.5.2",
