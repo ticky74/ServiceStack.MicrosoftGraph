@@ -176,5 +176,10 @@ Thats it!!
 After submitting the Authenticate request, the expected flow for oauth will proceed 
 without suprises. If you are having problems drop me a line.
 
+### Future
+
+The intention is to add more services that make requests into the Azure Graph in order to 
+directly expose this functionality to your ServiceStack app. Please feel free to implementation
+anything missing.
 
 Any questions, comments, complaints drop me a line <ikulmatycki@gmail.com>
