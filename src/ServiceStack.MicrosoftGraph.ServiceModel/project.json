@@ -29,6 +29,10 @@
         "ServiceStack.Interfaces": "4.5.2",
         "System.Collections.Specialized": "4.3.0"
       }
-    } 
+    }
+  },
+
+  "runtimes": {
+    "win10-x64": {}
   }
 }

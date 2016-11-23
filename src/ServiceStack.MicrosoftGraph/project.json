@@ -4,6 +4,10 @@
   "dependencies": {
   },
 
+  "runtimes": {
+    "win10-x64": {}
+  },
+
   "frameworks": {
     "netstandard1.6": {
       "imports": "dnxcore50",
@@ -39,6 +43,6 @@
       "frameworkAssemblies": {
         "System.Data": "4.0.0.0"
       }
-    } 
+    }
   }
 }
