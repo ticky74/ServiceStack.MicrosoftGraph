@@ -2,10 +2,7 @@
   "version": "1.0.0-*",
 
   "dependencies": {
-  },
-
-  "runtimes": {
-    "win10-x64": {}
+    "Microsoft.NETCore.Portable.Compatibility": "1.0.1"
   },
 
   "frameworks": {
