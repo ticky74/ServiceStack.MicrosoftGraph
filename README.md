@@ -11,7 +11,7 @@ You will notice [@jfoshee](https://github.com/jfoshee) referenced throughout the
 
 ### Getting Started
 For the majority of you who aren't my Mom and are uninterested in reading my rambling, just 
-fire it up and follow the steps [here](https://github.com/ticky74/ServiceStack.Authentication.Azure/wiki/Get-Started).
+head over to the [quick start](https://github.com/ticky74/ServiceStack.MicrosoftGraph/wiki/Quick-Start).
 
 ## Azure v2.0 Endpoint
 In a nutshell, Microsoft has converged the authentication scenarios of personal Microsoft 
