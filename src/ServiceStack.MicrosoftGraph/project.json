@@ -2,25 +2,29 @@
   "version": "1.0.0-*",
 
   "dependencies": {
-    "ServiceStack.MicrosoftGraph.ServiceModel": "1.0.0-*",
-    "Microsoft.IdentityModel.Logging": "1.1.0",
-    "ServiceStack.Server.Core": "1.0.30",
-    "System.IdentityModel.Tokens.Jwt": "5.1.0",
-    "NETStandard.Library": "1.6.1"
+    "Microsoft.NETCore.Portable.Compatibility": "1.0.1"
   },
 
   "frameworks": {
     "netstandard1.6": {
       "imports": "dnxcore50",
       "dependencies": {
+        "ServiceStack.MicrosoftGraph.ServiceModel": "1.0.0-*",
+        "Microsoft.IdentityModel.Logging": "1.1.0",
+        "ServiceStack.Server.Core": "1.0.30",
+        "System.IdentityModel.Tokens.Jwt": "5.1.0",
+        "NETStandard.Library": "1.6.1"
       }
     },
-    "netcoreapp1.1": {
-      "imports": [
-        "portable-net452+win81"
-      ],
+    "net462": {
       "dependencies": {
-        "Microsoft.NETCore.App": "1.1.0"
+        "ServiceStack.MicrosoftGraph.ServiceModel": "1.0.0-*",
+        "Microsoft.IdentityModel.Logging": "1.1.0",
+        "ServiceStack.Server": "4.5.2",
+        "System.IdentityModel.Tokens.Jwt": "5.1.0"
+      },
+      "frameworkAssemblies": {
+        "System.Data": "4.0.0.0"
       }
     }
   }

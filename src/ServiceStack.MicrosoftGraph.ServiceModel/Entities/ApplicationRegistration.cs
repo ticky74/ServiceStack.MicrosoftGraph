@@ -30,7 +30,8 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
 
         [Required]
         [StringLength(48)]
-        public string AppTenantId { get; set; }
+        [Index(Unique = true)]
+        public Guid AppTenantId { get; set; }
 
         #endregion
 

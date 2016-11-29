@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ServiceStack.MicrosoftGraph.ServiceModel</id>
+    <version>$version$</version>
+    <title>Microsoft Graph Authentication Model Library</title>
+    <authors>ticky74</authors>
+    <owners>ticky74</owners>
+    <licenseUrl>https://github.com/ticky74/ServiceStack.MicrosoftGraph/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/ticky74/ServiceStack.MicrosoftGraph</projectUrl>
+    <iconUrl>https://github.com/ticky74/ServiceStack.MicrosoftGraph/blob/master/docs/Icon.jpeg</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Service Model library for the ServiceStack.MicrosoftGraph feature</description>
+    <copyright>Copyright 2016</copyright>
+    <tags>ServiceStack Authentication Azure MicrosoftGraph API</tags>
+  </metadata>
+</package>

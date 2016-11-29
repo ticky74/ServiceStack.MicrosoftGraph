@@ -17,3 +17,4 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("472a9aed-2f87-4143-8a60-d76ad2ad3734")]
+[assembly: InternalsVisibleTo("ServiceStack.MicrosoftGraph")]
