@@ -1,3 +1,4 @@
+using System;
 using ServiceStack.DataAnnotations;
 
 namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
@@ -16,6 +17,9 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
 
         [DataAnnotations.Required]
         public string DirectoryName { get; set; }
+
+        [Required]
+        public DateTimeOffset DateCreatedUtc { get; set; } = DateTimeOffset.UtcNow;
 
         public long? RefId { get; set; }
 
