@@ -16,6 +16,8 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Interfaces
         ApplicationRegistration RegisterApplication(string applicationid, string publicKey, string directoryName,
             long? refId, string refIdStr);
 
+        int GrantAdminConsent(string directoryName, string username);
+
         #endregion
     }
 }

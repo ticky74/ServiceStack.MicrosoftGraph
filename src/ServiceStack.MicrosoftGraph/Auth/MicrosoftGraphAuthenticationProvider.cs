@@ -43,9 +43,9 @@ namespace ServiceStack.Azure.Auth
             _graphService = graphService ?? new MicrosoftGraphService();
             AppSettings = settings;
 
-            if (ServiceStackHost.Instance == null) return;
-            if (ServiceStackHost.Instance.TryResolve<MicrosoftGraphAuthService>() == null)
-                RegisterProviderSupportServices(ServiceStackHost.Instance);
+//            if (ServiceStackHost.Instance == null) return;
+//            if (ServiceStackHost.Instance.TryResolve<MicrosoftGraphAuthService>() == null)
+//                RegisterProviderSupportServices(ServiceStackHost.Instance);
         }
 
         #endregion
@@ -103,9 +103,27 @@ namespace ServiceStack.Azure.Auth
             if (userSession == null)
                 throw new NotSupportedException("Concrete dependence on AuthUserSession because of State property");
 
+            if (string.Compare(query["request_consent"], "true", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                var appDirectory = GetDirectoryNameFromUsername(request.UserName);
+                var appRegistry = authService.TryResolve<IApplicationRegistryService>();
+                var registration = appRegistry.GetApplicationByDirectoryName(appDirectory);
+                if (registration.ConstentDateUtc == null)
+                    return RequestCode(authService, request, session, userSession, tokens, true);
+            }
+
+            if (string.Compare(query["admin_consent"], "true", StringComparison.OrdinalIgnoreCase) == 0
+                && query["state"] == userSession.State)
+            {
+                GrantDirectoryConsent(authService, userSession);
+            }
+
             var code = query["code"];
             if (code.IsNullOrEmpty())
-                return RequestCode(authService, request, session, userSession, tokens);
+            {
+                // TODO: ONLY ALLOW AUTHENTICATION TO CONSENTED DIRECTORIES
+                return RequestCode(authService, request, session, userSession, tokens, false);
+            }
 
             var state = query["state"];
             if (state != userSession.State)
@@ -172,6 +190,13 @@ namespace ServiceStack.Azure.Auth
             if (host == null) return;
             if (host.TryResolve<MicrosoftGraphAuthService>() == null)
                 host.RegisterService(typeof(MicrosoftGraphAuthService));
+        }
+
+        private void GrantDirectoryConsent(IServiceBase authService, IAuthSession session)
+        {
+            var appDirectory = GetDirectoryNameFromUsername(session.UserName);
+            var appRegistry = authService.TryResolve<IApplicationRegistryService>();
+            appRegistry.GrantAdminConsent(appDirectory, session.UserName);
         }
 
         private object RequestAccessToken(IServiceBase authService, IAuthSession session, string code,
@@ -246,10 +271,11 @@ namespace ServiceStack.Azure.Auth
         }
 
         private object RequestCode(IServiceBase authService, Authenticate request, IAuthSession session,
-            AuthUserSession userSession, IAuthTokens tokens)
+            AuthUserSession userSession, IAuthTokens tokens, bool isConsentRequest = false)
         {
-            var appDirectory = GetDirectoryNameFromUsername(request.UserName);
-            session.UserName = request.UserName;
+            var appDirectory = GetDirectoryNameFromUsername(request.UserName??session.UserName);
+            if (string.IsNullOrWhiteSpace(session.UserName))
+                session.UserName = request.UserName;
 
             var appRegistry = authService.TryResolve<IApplicationRegistryService>();
             if (appRegistry == null)
@@ -260,14 +286,23 @@ namespace ServiceStack.Azure.Auth
             if (registration == null)
                 throw new UnauthorizedAccessException($"Authorization for directory @{appDirectory} failed.");
 
-            var codeRequestData = _graphService.RequestAuthCode(new AuthCodeRequest
+            var codeRequest = new AuthCodeRequest
             {
                 CallbackUrl = CallbackUrl,
                 Registration = registration,
                 Scopes = Scopes,
                 UserName = request.UserName
-            });
-            tokens.Items.Add("ClientId", registration.ClientId);
+            };
+            var codeRequestData = (isConsentRequest)
+                ? _graphService.RequestConsentCode(codeRequest)
+                : _graphService.RequestAuthCode(codeRequest);
+
+            if (!tokens.Items.ContainsKey("ClientId"))
+                tokens.Items.Add("ClientId", registration.ClientId);
+
+            if (string.IsNullOrWhiteSpace(userSession.UserName))
+                userSession.UserName = request.UserName;
+
             userSession.State = codeRequestData.State;
             authService.SaveSession(session, SessionExpiry);
             return authService.Redirect(PreAuthUrlFilter(this, codeRequestData.AuthCodeRequestUrl));

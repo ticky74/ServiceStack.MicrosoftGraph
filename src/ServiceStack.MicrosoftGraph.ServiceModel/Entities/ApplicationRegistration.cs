@@ -33,6 +33,11 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
         [Index(Unique = true)]
         public Guid AppTenantId { get; set; }
 
+        public DateTimeOffset? ConstentDateUtc { get; set; }
+
+        [StringLength(128)]
+        public string ConsentGrantedBy { get; set; }
+
         #endregion
 
         #region IHasLongId Members

@@ -44,6 +44,18 @@ namespace ServiceStack.Azure.Auth
             return me;
         }
 
+        public AuthCodeRequestData RequestConsentCode(AuthCodeRequest codeRequest)
+        {
+            var state = Guid.NewGuid().ToString("N");
+            var reqUrl = MsGraph.GetConsentUrl(codeRequest.Registration.DirectoryName, codeRequest.Registration.ClientId,
+                state, codeRequest.CallbackUrl.UrlEncode());
+            return new AuthCodeRequestData
+            {
+                AuthCodeRequestUrl = reqUrl,
+                State = state
+            };
+        }
+
         public AuthCodeRequestData RequestAuthCode(AuthCodeRequest codeRequest)
         {
             var state = Guid.NewGuid().ToString("N");

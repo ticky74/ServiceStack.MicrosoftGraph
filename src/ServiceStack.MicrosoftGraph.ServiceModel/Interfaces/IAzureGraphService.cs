@@ -10,6 +10,7 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Interfaces
         string[] GetMemberGroups(string authToken);
         Me Me(string authToken);
         AuthCodeRequestData RequestAuthCode(AuthCodeRequest codeRequest);
+        AuthCodeRequestData RequestConsentCode(AuthCodeRequest codeRequest);
         TokenResponse RequestAuthToken(AuthTokenRequest tokenRequest);
 
         #endregion

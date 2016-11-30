@@ -99,6 +99,23 @@ namespace ServiceStack.Azure.Auth
             }
         }
 
+        public int GrantAdminConsent(string directoryName, string username)
+        {
+            if (string.IsNullOrWhiteSpace(directoryName))
+                throw new ArgumentException("Parameter cannot be empty.", nameof(directoryName));
+
+            if (string.IsNullOrWhiteSpace(username))
+                throw new ArgumentException("Parameter cannot be empty.", nameof(username));
+
+            var loweredDomain = directoryName.ToLower();
+            using (var db = _connectionFactory.OpenDbConnection())
+            {
+                return db.Update<ApplicationRegistration>(
+                    new {ConstentDateUtc = DateTimeOffset.UtcNow, ConsentGrantedBy = username},
+                    d => d.DirectoryName == loweredDomain);
+            }
+        }
+
         public void InitSchema()
         {
             using (var db = _connectionFactory.OpenDbConnection())

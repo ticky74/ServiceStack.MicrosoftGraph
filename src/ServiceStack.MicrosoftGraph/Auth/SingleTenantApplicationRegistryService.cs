@@ -91,6 +91,13 @@ namespace ServiceStack.Azure.Auth
             throw new NotImplementedException("Cannot override configured application registration");
         }
 
+        public int GrantAdminConsent(string directoryName, string username)
+        {
+            _registration.ConstentDateUtc = DateTimeOffset.UtcNow;
+            _registration.ConsentGrantedBy = username;
+            return 1;
+        }
+
         public void InitSchema()
         {
             // Noop
