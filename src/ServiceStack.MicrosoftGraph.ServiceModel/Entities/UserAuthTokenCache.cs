@@ -2,9 +2,9 @@
 using ServiceStack.DataAnnotations;
 using ServiceStack.Model;
 
-namespace ServiceStack.Azure.Auth
+namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
 {
-    public class TokenCache : IHasLongId
+    public class UserAuthTokenCache : IHasLongId
     {
         [PrimaryKey]
         [AutoIncrement]
@@ -12,7 +12,7 @@ namespace ServiceStack.Azure.Auth
         
         [Index(unique:true)]
         [Required]
-        public int UserAuthId { get; set; }  
+        public string UserName { get; set; }  
 
         [Required]
         [StringLength(1024)]

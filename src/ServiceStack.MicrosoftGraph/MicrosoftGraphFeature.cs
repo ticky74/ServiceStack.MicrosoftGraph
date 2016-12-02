@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ServiceStack.Azure.Auth;
 using ServiceStack.Data;
 using ServiceStack.MicrosoftGraph.ServiceModel.Entities;
+using ServiceStack.MicrosoftGraph.ServiceModel.Interfaces;
 using ServiceStack.OrmLite;
 
 namespace ServiceStack.Azure
@@ -24,7 +25,11 @@ namespace ServiceStack.Azure
             {
                 db.CreateTableIfNotExists<ApplicationRegistration>();
                 db.CreateTableIfNotExists<DirectoryUpn>();
-                
+                var tCache = appHost.TryResolve<ITokenCache>();
+                if (tCache is OrmLiteTokenCache)
+                {
+                    db.CreateTableIfNotExists<UserAuthTokenCache>();
+                }
             }
         }
     }

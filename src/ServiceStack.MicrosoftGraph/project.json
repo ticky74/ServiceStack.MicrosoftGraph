@@ -7,7 +7,10 @@
 
   "frameworks": {
     "netstandard1.6": {
-      "imports": "dnxcore50",
+      "imports": [
+        "dnxcore50",
+        "portable-net452+win81"
+      ],
       "dependencies": {
         "ServiceStack.MicrosoftGraph.ServiceModel": "1.0.0-*",
         "Microsoft.IdentityModel.Logging": "1.1.0",
@@ -20,10 +23,10 @@
       "dependencies": {
         "ServiceStack.MicrosoftGraph.ServiceModel": "1.0.0-*",
         "Microsoft.IdentityModel.Logging": "1.1.0",
-        "ServiceStack.Server": "4.5.2",
         "System.IdentityModel.Tokens.Jwt": "5.1.0",
         "Microsoft.Net.Http": "2.2.29",
-        "System.Net.Http": "4.3.0"
+        "System.Net.Http": "4.3.0",
+        "ServiceStack.Server": "4.5.4"
       },
       "frameworkAssemblies": {
         "System.Data": "4.0.0.0"
