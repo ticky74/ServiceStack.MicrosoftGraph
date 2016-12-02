@@ -23,6 +23,8 @@ namespace ServiceStack.Azure
             using (var db = connectionFactory.OpenDbConnection())
             {
                 db.CreateTableIfNotExists<ApplicationRegistration>();
+                db.CreateTableIfNotExists<DirectoryUpn>();
+                
             }
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ServiceStack.DataAnnotations;
 
 namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
@@ -14,9 +15,6 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
         [DataAnnotations.Required]
         [DataAnnotations.StringLength(64)]
         public string ClientSecret { get; set; }
-
-        [DataAnnotations.Required]
-        public string DirectoryName { get; set; }
 
         [Required]
         public DateTimeOffset DateCreatedUtc { get; set; } = DateTimeOffset.UtcNow;
@@ -34,6 +32,9 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
         public Guid AppTenantId { get; set; }
 
         public DateTimeOffset? ConstentDateUtc { get; set; }
+
+        [Reference]
+        public List<DirectoryUpn> Upns { get; set; }
 
         [StringLength(128)]
         public string ConsentGrantedBy { get; set; }

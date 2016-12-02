@@ -21,7 +21,9 @@
         "ServiceStack.MicrosoftGraph.ServiceModel": "1.0.0-*",
         "Microsoft.IdentityModel.Logging": "1.1.0",
         "ServiceStack.Server": "4.5.2",
-        "System.IdentityModel.Tokens.Jwt": "5.1.0"
+        "System.IdentityModel.Tokens.Jwt": "5.1.0",
+        "Microsoft.Net.Http": "2.2.29",
+        "System.Net.Http": "4.3.0"
       },
       "frameworkAssemblies": {
         "System.Data": "4.0.0.0"

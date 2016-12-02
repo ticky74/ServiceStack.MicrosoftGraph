@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using ServiceStack.Data;
 using ServiceStack.MicrosoftGraph.ServiceModel;
 using ServiceStack.MicrosoftGraph.ServiceModel.Entities;
@@ -31,7 +33,9 @@ namespace ServiceStack.Azure.Auth
             using (var db = _connectionFactory.OpenDbConnection())
             {
                 var loweredDomain = directoryName.ToLower();
-                return db.Exists<ApplicationRegistration>(d => d.DirectoryName == loweredDomain);
+                var q = db.From<DirectoryUpn>()
+                    .Where(x => x.Suffix == loweredDomain);
+                return db.Exists<DirectoryUpn>(q);
             }
         }
 
@@ -43,7 +47,11 @@ namespace ServiceStack.Azure.Auth
             var loweredDomain = domain.ToLower();
             using (var db = _connectionFactory.OpenDbConnection())
             {
-                return db.Single<ApplicationRegistration>(d => d.DirectoryName == loweredDomain);
+                var q = db.From<ApplicationRegistration>()
+                    .Join<ApplicationRegistration, DirectoryUpn>(
+                        (registration, upn) => registration.Id == upn.ApplicationRegistrationId)
+                    .Where<DirectoryUpn>(x => x.Suffix == loweredDomain);
+                return db.LoadSelect(q).FirstOrDefault();
             }
         }
 
@@ -54,7 +62,8 @@ namespace ServiceStack.Azure.Auth
 
             using (var db = _connectionFactory.OpenDbConnection())
             {
-                return db.Single<ApplicationRegistration>(d => d.ClientId == applicationId);
+                return db.LoadSelect<ApplicationRegistration>(d => d.ClientId == applicationId)
+                    .FirstOrDefault();
             }
         }
 
@@ -63,41 +72,71 @@ namespace ServiceStack.Azure.Auth
             if (registration == null)
                 throw new ArgumentException($"Cannot register null or empty {nameof(ApplicationRegistration)}.");
 
-            return RegisterApplication(registration.ClientId, registration.ClientSecret, registration.DirectoryName,
-                registration.RefId, registration.RefIdStr);
-        }
+            if (string.IsNullOrWhiteSpace(registration.ClientId))
+                throw new ArgumentException("Parameter cannot be empty.", nameof(registration.ClientId));
 
-        public ApplicationRegistration RegisterApplication(string applicationId, string publicKey, string directoryName,
-            long? refId, string refIdStr)
-        {
-            if (string.IsNullOrWhiteSpace(applicationId))
-                throw new ArgumentException("Parameter cannot be empty.", nameof(applicationId));
+            if (string.IsNullOrWhiteSpace(registration.ClientSecret))
+                throw new ArgumentException("Parameter cannot be empty.", nameof(registration.ClientSecret));
 
-            if (string.IsNullOrWhiteSpace(publicKey))
-                throw new ArgumentException("Parameter cannot be empty.", nameof(publicKey));
+            if (registration.Upns?.Any() == false)
+            {
+                throw new ArgumentException("At least one upn must be specified to register an application.");
+            }
 
-            if (string.IsNullOrWhiteSpace(directoryName))
-                throw new ArgumentException("Parameter cannot be empty.", nameof(directoryName));
+            var duplicates = new List<string>();
+            registration.Upns.Each(upn =>
+            {
+                upn.Suffix = upn.Suffix.ToLower();
+                upn.DateCreatedUtc = registration.DateCreatedUtc;
+                duplicates.Add(upn.Suffix);
+            });
 
             using (var db = _connectionFactory.OpenDbConnection())
             {
-                var loweredDomain = directoryName.ToLower();
-                if (db.Exists<ApplicationRegistration>(d => d.DirectoryName == loweredDomain))
-                    throw new InvalidOperationException($"Aad domain {directoryName} is already registered");
-
-                var id = db.Insert(new ApplicationRegistration
+                var existing = db.Select<DirectoryUpn>(x => duplicates.Contains(x.Suffix));
+                if (existing.Any())
                 {
-                    ClientId = applicationId,
-                    ClientSecret = publicKey,
-                    DirectoryName = directoryName,
-                    RefId = refId,
-                    RefIdStr = refIdStr,
-                    AppTenantId = SequentialGuid.Create()
-                }, true);
+                    throw new InvalidOperationException($"Specified suffix(es) already registered: {string.Join(",", existing)}");
+                }
 
-                return db.Single<ApplicationRegistration>(d => d.Id == id);
+                db.Save(registration, true);
+                return db.Single<ApplicationRegistration>(d => d.Id == registration.Id);
             }
         }
+
+//        public ApplicationRegistration RegisterApplication(string applicationId, string publicKey, string directoryName,
+//            long? refId, string refIdStr)
+//        {
+//            if (string.IsNullOrWhiteSpace(applicationId))
+//                throw new ArgumentException("Parameter cannot be empty.", nameof(applicationId));
+//
+//            if (string.IsNullOrWhiteSpace(publicKey))
+//                throw new ArgumentException("Parameter cannot be empty.", nameof(publicKey));
+//
+//            if (string.IsNullOrWhiteSpace(directoryName))
+//                throw new ArgumentException("Parameter cannot be empty.", nameof(directoryName));
+//
+//           
+//
+//            using (var db = _connectionFactory.OpenDbConnection())
+//            {
+//                var loweredDomain = directoryName.ToLower();
+//                if (db.Exists<ApplicationRegistration>(d => d.DirectoryName == loweredDomain))
+//                    throw new InvalidOperationException($"Aad domain {directoryName} is already registered");
+//                var dir = new ApplicationRegistration
+//                {
+//                    ClientId = applicationId,
+//                    ClientSecret = publicKey,
+//                    DirectoryName = directoryName,
+//                    RefId = refId,
+//                    RefIdStr = refIdStr,
+//                    AppTenantId = SequentialGuid.Create()
+//                };
+//                db.Save(dir, true);
+//
+//                return db.Single<ApplicationRegistration>(d => d.Id == dir.Id);
+//            }
+//        }
 
         public int GrantAdminConsent(string directoryName, string username)
         {
@@ -109,10 +148,15 @@ namespace ServiceStack.Azure.Auth
 
             var loweredDomain = directoryName.ToLower();
             using (var db = _connectionFactory.OpenDbConnection())
-            {
-                return db.Update<ApplicationRegistration>(
-                    new {ConstentDateUtc = DateTimeOffset.UtcNow, ConsentGrantedBy = username},
-                    d => d.DirectoryName == loweredDomain);
+            { 
+                var q = db.From<ApplicationRegistration>()
+                    .Join<ApplicationRegistration, DirectoryUpn>((registration, upn) => registration.Id == upn.ApplicationRegistrationId)
+                        .Where<DirectoryUpn>(x => x.Suffix == loweredDomain);
+
+                var ar = db.Single<ApplicationRegistration>(q);
+                ar.ConsentGrantedBy = username;
+                ar.ConstentDateUtc = DateTimeOffset.UtcNow;
+                return db.Update(ar);
             }
         }
 

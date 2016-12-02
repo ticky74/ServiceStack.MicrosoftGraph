@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ServiceStack.MicrosoftGraph.ServiceModel.Entities;
 using ServiceStack.MicrosoftGraph.ServiceModel.Interfaces;
 
@@ -41,17 +42,17 @@ namespace ServiceStack.Azure.Auth
         #region Constants and Variables
 
         private readonly ApplicationRegistration _registration;
-
+        private HashSet<string> _upns;
         #endregion
 
         #region Constructors
 
         public SingleTenantApplicationRegistryService(MicrosoftGraphDirectorySettings settings)
         {
+            _upns = new HashSet<string>(new [] {settings.DirectoryName.ToLower()});
             _registration = new ApplicationRegistration
             {
                 ClientId = settings.ClientId,
-                DirectoryName = settings.DirectoryName,
                 ClientSecret = settings.ClientSecret
             };
         }
@@ -62,7 +63,9 @@ namespace ServiceStack.Azure.Auth
 
         public bool ApplicationIsRegistered(string directoryName)
         {
-            return string.Compare(_registration.DirectoryName, directoryName, StringComparison.Ordinal) == 0;
+            if (string.IsNullOrWhiteSpace(directoryName))
+                return false;
+            return _upns.Contains(directoryName.ToLower());
         }
 
         public ApplicationRegistration GetApplicationByDirectoryName(string domain)

@@ -10,6 +10,7 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Requests
         public ApplicationRegistration Registration { get; set; }
         public string[] Scopes { get; set; }
         public string UserName { get; set; }
+        public string Upn { get; set; }
 
         #endregion
     }

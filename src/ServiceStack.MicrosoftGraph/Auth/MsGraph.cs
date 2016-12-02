@@ -26,6 +26,10 @@ namespace ServiceStack.Azure.Auth
 
         #region Public/Internal
 
+        public static string GetRefreshTokenUrl(string redirectUri, string clientSecret, string refreshToken)
+        {
+            return $"{TokenUrl}?grant_type=refresh_token&redirect_uri={redirectUri}&client_secret={clientSecret}&refresh_token={refreshToken}&resource=&resource=https%3A%2F%2Fgraph.microsoft.com%2F";
+        }
         public static string GetConsentUrl(string tenantId, string applicationId, string state, string redirectUri)
         {
             return

@@ -13,8 +13,8 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Interfaces
         void InitSchema();
         ApplicationRegistration RegisterApplication(ApplicationRegistration registration);
 
-        ApplicationRegistration RegisterApplication(string applicationid, string publicKey, string directoryName,
-            long? refId, string refIdStr);
+//        ApplicationRegistration RegisterApplication(string applicationid, string publicKey, string directoryName,
+//            long? refId, string refIdStr);
 
         int GrantAdminConsent(string directoryName, string username);
 

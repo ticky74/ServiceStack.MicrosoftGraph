@@ -291,7 +291,8 @@ namespace ServiceStack.Azure.Auth
                 CallbackUrl = CallbackUrl,
                 Registration = registration,
                 Scopes = Scopes,
-                UserName = request.UserName
+                UserName = request.UserName,
+                Upn = appDirectory
             };
             var codeRequestData = (isConsentRequest)
                 ? _graphService.RequestConsentCode(codeRequest)
