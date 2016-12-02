@@ -2,7 +2,6 @@
   "version": "1.0.0-*",
 
   "dependencies": {
-    "Microsoft.NETCore.Portable.Compatibility": "1.0.1"
   },
 
   "frameworks": {
@@ -10,6 +9,19 @@
       "imports": [
         "dnxcore50",
         "portable-net452+win81"
+      ],
+      "dependencies": {
+        "ServiceStack.MicrosoftGraph.ServiceModel": "1.0.0-*",
+        "Microsoft.IdentityModel.Logging": "1.1.0",
+        "ServiceStack.Server.Core": "1.0.30",
+        "System.IdentityModel.Tokens.Jwt": "5.1.0",
+        "NETStandard.Library": "1.6.1"
+      }
+    },
+    "netcoreapp1.1": {
+      "imports": [
+        "dotnet5.6",
+        "portable-net45+win8"
       ],
       "dependencies": {
         "ServiceStack.MicrosoftGraph.ServiceModel": "1.0.0-*",

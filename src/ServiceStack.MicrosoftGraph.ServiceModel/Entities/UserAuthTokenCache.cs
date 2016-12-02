@@ -12,6 +12,7 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
         
         [Index(unique:true)]
         [Required]
+        [StringLength(256)]
         public string UserName { get; set; }  
 
         [Required]
@@ -23,6 +24,10 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
         [Required]
         [StringLength(1024)]
         public string RefreshToken { get; set; }
+
+        [Required]
+        [StringLength(1024)]
+        public string IdToken { get; set; }
 
         public DateTimeOffset? RefreshTokenExpiration { get; set; }
     }

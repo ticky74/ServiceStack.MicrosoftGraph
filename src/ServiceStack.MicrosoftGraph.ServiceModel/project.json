@@ -3,7 +3,6 @@
   "version": "1.0.0-*",
 
   "dependencies": {
-    "Microsoft.NETCore.Portable.Compatibility": "1.0.1"
   },
 
   "frameworks": {
@@ -18,6 +17,17 @@
     "net462": {
       "dependencies": {
         "ServiceStack.Interfaces": "4.5.2",
+        "System.Collections.Specialized": "4.3.0"
+      }
+    },
+    "netcoreapp1.1": {
+      "imports": [
+        "dotnet5.6",
+        "portable-net45+win8"
+      ],
+      "dependencies": {
+        "NETStandard.Library": "1.6.1",
+        "ServiceStack.Interfaces.Core": "1.0.30",
         "System.Collections.Specialized": "4.3.0"
       }
     }

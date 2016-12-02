@@ -46,7 +46,7 @@ namespace ServiceStack.Azure
         {
             using (var db = _connectionFactory.OpenDbConnection())
             {
-                db.Delete(_userTokenFilter);
+                db.Delete(_userTokenFilter(db, userName));
             }
         }
 
@@ -54,7 +54,7 @@ namespace ServiceStack.Azure
         {
             using (var db = _connectionFactory.OpenDbConnection())
             {
-                await db.DeleteAsync(_userTokenFilter);
+                await db.DeleteAsync(_userTokenFilter(db, userName));
             }
         }
 
@@ -71,7 +71,7 @@ namespace ServiceStack.Azure
 
             using (var db = _connectionFactory.OpenDbConnection())
             {
-                db.Delete(_userTokenFilter);
+                db.Delete(_userTokenFilter(db, cacheItem.UserName));
                 db.Save(cacheItem);
             }
         }
@@ -89,7 +89,7 @@ namespace ServiceStack.Azure
 
             using (var db = _connectionFactory.OpenDbConnection())
             {
-                await db.DeleteAsync(_userTokenFilter);
+                await db.DeleteAsync(_userTokenFilter(db, cacheItem.UserName));
                 await db.SaveAsync(cacheItem);
             }
         }

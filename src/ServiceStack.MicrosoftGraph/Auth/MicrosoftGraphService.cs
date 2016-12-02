@@ -99,7 +99,9 @@ namespace ServiceStack.Azure.Auth
             {
                 AuthData = authInfoNvc,
                 AccessToken = authInfo["access_token"],
-                RefreshToken = authInfo["refresh_token"]
+                RefreshToken = authInfo["refresh_token"],
+                IdToken = authInfo["id_token"],
+                TokenExpirationSeconds = authInfo["expires_in"]
             };
         }
 

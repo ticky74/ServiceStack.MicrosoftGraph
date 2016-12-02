@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using ServiceStack.Auth;
 using ServiceStack.Configuration;
+using ServiceStack.MicrosoftGraph.ServiceModel.Entities;
 using ServiceStack.MicrosoftGraph.ServiceModel.Interfaces;
 using ServiceStack.MicrosoftGraph.ServiceModel.Requests;
 using ServiceStack.Text;
@@ -217,6 +218,7 @@ namespace ServiceStack.Azure.Auth
 
                 try
                 {
+                    var now = DateTimeOffset.UtcNow;
                     var tokenResponse = _graphService.RequestAuthToken(new AuthTokenRequest
                     {
                         CallbackUrl = CallbackUrl,
@@ -228,6 +230,17 @@ namespace ServiceStack.Azure.Auth
 
                     tokens.AccessTokenSecret = tokenResponse.AccessToken;
                     tokens.RefreshToken = tokenResponse.RefreshToken;
+
+                    var tokenCache = authService.TryResolve<ITokenCache>();
+                    tokenCache.UpdateTokenCache(new UserAuthTokenCache
+                    {
+                        AccessToken = tokenResponse.AccessToken,
+                        RefreshToken = tokenResponse.RefreshToken,
+                        AccessTokenExpiration = now.AddSeconds(int.Parse(tokenResponse.TokenExpirationSeconds)),
+                        RefreshTokenExpiration = now.AddSeconds(TimeSpan.FromDays(14).TotalSeconds-1),
+                        IdToken = tokenResponse.IdToken,
+                        UserName = session.UserName
+                    });
 
                     return OnAuthenticated(authService, session, tokens, tokenResponse.AuthData.ToDictionary())
                            ??
