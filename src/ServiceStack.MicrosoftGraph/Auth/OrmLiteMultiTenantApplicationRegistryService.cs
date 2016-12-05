@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ServiceStack.Caching;
 using ServiceStack.Data;
 using ServiceStack.MicrosoftGraph.ServiceModel;
 using ServiceStack.MicrosoftGraph.ServiceModel.Entities;
@@ -13,15 +14,29 @@ namespace ServiceStack.Azure.Auth
     {
         #region Constants and Variables
 
+        public class DirectoryRegistrationLookup
+        {
+            public long RegistryId { get; set; }
+            public string Upn { get; set; }
+        }
+
+        public class ClientIdRegistrationLookup
+        {
+            public long RegistryId { get; set; }
+            public string ClientId { get; set; }
+        }
+
         private readonly IDbConnectionFactory _connectionFactory;
+        private readonly ICacheClient _cacheClient;
 
         #endregion
 
         #region Constructors
 
-        public OrmLiteMultiTenantApplicationRegistryService(IDbConnectionFactory connectionFactory)
+        public OrmLiteMultiTenantApplicationRegistryService(IDbConnectionFactory connectionFactory, ICacheClient cacheClient)
         {
             _connectionFactory = connectionFactory;
+            _cacheClient = cacheClient;
         }
 
         #endregion
@@ -45,14 +60,42 @@ namespace ServiceStack.Azure.Auth
                 return null;
 
             var loweredDomain = domain.ToLower();
-            using (var db = _connectionFactory.OpenDbConnection())
-            {
-                var q = db.From<ApplicationRegistration>()
-                    .Join<ApplicationRegistration, DirectoryUpn>(
-                        (registration, upn) => registration.Id == upn.ApplicationRegistrationId)
-                    .Where<DirectoryUpn>(x => x.Suffix == loweredDomain);
-                return db.LoadSelect(q).FirstOrDefault();
-            }
+            var dirLookup = _cacheClient.GetOrCreate(UrnId.Create(typeof(DirectoryRegistrationLookup), loweredDomain),
+                () =>
+                {
+                    using (var db = _connectionFactory.OpenDbConnection())
+                    {
+                        var q = db.From<ApplicationRegistration>()
+                            .Join<ApplicationRegistration, DirectoryUpn>(
+                                (registration, upn) => registration.Id == upn.ApplicationRegistrationId)
+                            .Where<DirectoryUpn>(x => x.Suffix == loweredDomain)
+                            .Select<ApplicationRegistration>(x => x.Id);
+
+                        var id = db.Column<long>(q).FirstOrDefault();
+                        return new DirectoryRegistrationLookup
+                        {
+                            RegistryId = id,
+                            Upn = loweredDomain
+                        };
+                    }
+                });
+
+            return ApplicationById(dirLookup.RegistryId);
+        }
+
+        private ApplicationRegistration ApplicationById(long id)
+        {
+            var reg = _cacheClient.GetOrCreate(UrnId.Create(typeof(ApplicationRegistration), id.ToString()),
+                () =>
+                {
+                    using (var db = _connectionFactory.OpenDbConnection())
+                    {
+                        var q = db.From<ApplicationRegistration>()
+                            .Where(x => x.Id == id);
+                        return db.LoadSelect(q).FirstOrDefault();
+                    }
+                });
+            return reg;
         }
 
         public ApplicationRegistration GetApplicationById(string applicationId)
@@ -60,11 +103,26 @@ namespace ServiceStack.Azure.Auth
             if (string.IsNullOrWhiteSpace(applicationId))
                 return null;
 
-            using (var db = _connectionFactory.OpenDbConnection())
-            {
-                return db.LoadSelect<ApplicationRegistration>(d => d.ClientId == applicationId)
-                    .FirstOrDefault();
-            }
+            // ClientIdRegistrationLookup
+            var dirLookup = _cacheClient.GetOrCreate(UrnId.Create(typeof(ClientIdRegistrationLookup), applicationId),
+                () =>
+                {
+                    using (var db = _connectionFactory.OpenDbConnection())
+                    {
+                        var q = db.From<ApplicationRegistration>()
+                            .Where(x => x.ClientId == applicationId)
+                            .Select<ApplicationRegistration>(x => x.Id);
+
+                        var id = db.Column<long>(q).FirstOrDefault();
+                        return new ClientIdRegistrationLookup
+                        {
+                            RegistryId = id,
+                            ClientId = applicationId
+                        };
+                    }
+                });
+
+            return ApplicationById(dirLookup.RegistryId);
         }
 
         public ApplicationRegistration RegisterApplication(ApplicationRegistration registration)
@@ -91,6 +149,7 @@ namespace ServiceStack.Azure.Auth
                 duplicates.Add(upn.Suffix);
             });
 
+            long id;
             using (var db = _connectionFactory.OpenDbConnection())
             {
                 var existing = db.Select<DirectoryUpn>(x => duplicates.Contains(x.Suffix));
@@ -100,8 +159,10 @@ namespace ServiceStack.Azure.Auth
                 }
 
                 db.Save(registration, true);
-                return db.Single<ApplicationRegistration>(d => d.Id == registration.Id);
+                id = registration.Id;
             }
+
+            return ApplicationById(id);
         }
 
 //        public ApplicationRegistration RegisterApplication(string applicationId, string publicKey, string directoryName,
@@ -156,7 +217,10 @@ namespace ServiceStack.Azure.Auth
                 var ar = db.Single<ApplicationRegistration>(q);
                 ar.ConsentGrantedBy = username;
                 ar.ConstentDateUtc = DateTimeOffset.UtcNow;
-                return db.Update(ar);
+
+                var result = db.Update(ar);
+                _cacheClient.Remove(UrnId.Create(typeof(ClientIdRegistrationLookup), ar.Id.ToString()));
+                return result;
             }
         }
 
