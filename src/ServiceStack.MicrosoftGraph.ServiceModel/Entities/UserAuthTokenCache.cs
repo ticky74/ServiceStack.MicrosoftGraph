@@ -16,14 +16,17 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
         public string UserName { get; set; }  
 
         [Required]
+        [StringLength(8000)]
         public string AccessToken { get; set; }
 
         public DateTimeOffset? AccessTokenExpiration { get; set; }
 
         [Required]
+        [StringLength(8000)]
         public string RefreshToken { get; set; }
 
         [Required]
+        [StringLength(8000)]
         public string IdToken { get; set; }
 
         public DateTimeOffset? RefreshTokenExpiration { get; set; }
