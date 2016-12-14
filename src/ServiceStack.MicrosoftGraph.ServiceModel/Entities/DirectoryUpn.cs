@@ -10,7 +10,7 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
         [AutoIncrement]
         public long Id { get; set; }
 
-        [ForeignKey(typeof(ApplicationRegistration))]
+        [ForeignKey(typeof(ApplicationRegistration), OnDelete = "CASCADE")]
         public long ApplicationRegistrationId { get; set; }
 
         [Required]

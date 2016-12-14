@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using ServiceStack.Auth;
 using ServiceStack.Configuration;
@@ -72,6 +73,8 @@ namespace ServiceStack.Azure.Auth
         // http://graph.microsoft.io/en-us/docs/authorization/permission_scopes
         public string[] Scopes { get; set; }
 
+        public Func<IServiceBase, Authenticate, IAuthSession, ApplicationRegistration> CustomConsentRequestedHandler { get; set; }
+        public Action<IServiceBase, IAuthSession> OnConsentGranted { get; set; }
         #endregion
 
         #region Public/Internal
@@ -98,7 +101,6 @@ namespace ServiceStack.Azure.Auth
                 var result = RedirectDueToFailure(authService, session, query);
                 return result;
             }
-
             // TODO: Can State property be added to IAuthSession to avoid this cast
             var userSession = session as AuthUserSession;
             if (userSession == null)
@@ -106,16 +108,17 @@ namespace ServiceStack.Azure.Auth
 
             if (string.Compare(query["request_consent"], "true", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                var appDirectory = GetDirectoryNameFromUsername(request.UserName);
-                var appRegistry = authService.TryResolve<IApplicationRegistryService>();
-                var registration = appRegistry.GetApplicationByDirectoryName(appDirectory);
+                var registration = CustomConsentRequestedHandler != null ? CustomConsentRequestedHandler(authService, request, session) 
+                                                                    : GetDefaultConsentingDirectory(authService, request);
+
                 if (registration.ConstentDateUtc == null)
-                    return RequestCode(authService, request, session, userSession, tokens, true);
+                    return RequestCode(authService, request, session, userSession, tokens, registration, true);
             }
 
             if (string.Compare(query["admin_consent"], "true", StringComparison.OrdinalIgnoreCase) == 0
                 && query["state"] == userSession.State)
             {
+                OnConsentGranted?.Invoke(authService, userSession);
                 GrantDirectoryConsent(authService, userSession);
             }
 
@@ -123,7 +126,7 @@ namespace ServiceStack.Azure.Auth
             if (code.IsNullOrEmpty())
             {
                 // TODO: ONLY ALLOW AUTHENTICATION TO CONSENTED DIRECTORIES
-                return RequestCode(authService, request, session, userSession, tokens, false);
+                return RequestCode(authService, request, session, userSession, tokens);
             }
 
             var state = query["state"];
@@ -134,6 +137,14 @@ namespace ServiceStack.Azure.Auth
             }
 
             return RequestAccessToken(authService, session, code, tokens);
+        }
+
+        private static ApplicationRegistration GetDefaultConsentingDirectory(IServiceBase authService, Authenticate request)
+        {
+            var appDirectory = GetDirectoryNameFromUsername(request.UserName);
+            var appRegistry = authService.TryResolve<IApplicationRegistryService>();
+            var registration = appRegistry.GetApplicationByDirectoryName(appDirectory);
+            return registration;
         }
 
         public override object Logout(IServiceBase service, Authenticate request)
@@ -284,20 +295,23 @@ namespace ServiceStack.Azure.Auth
         }
 
         private object RequestCode(IServiceBase authService, Authenticate request, IAuthSession session,
-            AuthUserSession userSession, IAuthTokens tokens, bool isConsentRequest = false)
+            AuthUserSession userSession, IAuthTokens tokens, ApplicationRegistration registration = null, bool isConsentRequest = false)
         {
             var appDirectory = GetDirectoryNameFromUsername(request.UserName??session.UserName);
             if (string.IsNullOrWhiteSpace(session.UserName))
                 session.UserName = request.UserName;
 
-            var appRegistry = authService.TryResolve<IApplicationRegistryService>();
-            if (appRegistry == null)
-                throw new InvalidOperationException(
-                    $"No {nameof(IApplicationRegistryService)} found registered in AppHost.");
-
-            var registration = appRegistry.GetApplicationByDirectoryName(appDirectory);
             if (registration == null)
-                throw new UnauthorizedAccessException($"Authorization for directory @{appDirectory} failed.");
+            {
+                var appRegistry = authService.TryResolve<IApplicationRegistryService>();
+                if (appRegistry == null)
+                    throw new InvalidOperationException(
+                        $"No {nameof(IApplicationRegistryService)} found registered in AppHost.");
+
+                registration = appRegistry.GetApplicationByDirectoryName(appDirectory);
+                if (registration == null)
+                    throw new UnauthorizedAccessException($"Authorization for directory @{appDirectory} failed.");
+            }
 
             var codeRequest = new AuthCodeRequest
             {
