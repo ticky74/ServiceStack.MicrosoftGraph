@@ -20,7 +20,7 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
         public DateTimeOffset DateCreatedUtc { get; set; } = DateTimeOffset.UtcNow;
 
         public long? RefId { get; set; }
-
+        
         [DataAnnotations.StringLength(128)]
         public string RefIdStr { get; set; }
 

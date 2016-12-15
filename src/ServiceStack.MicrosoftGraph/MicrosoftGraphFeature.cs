@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using ServiceStack.Azure.Auth;
@@ -30,6 +31,17 @@ namespace ServiceStack.Azure
                 {
                     db.CreateTableIfNotExists<UserAuthTokenCache>();
                 }
+            }
+        }
+
+        public static void InitSchema(IDbConnection db, bool initTokenCache = false)
+        {
+            db.CreateTableIfNotExists<ApplicationRegistration>();
+            db.CreateTableIfNotExists<DirectoryUpn>();
+            db.CreateTableIfNotExists<UserAuthTokenCache>();
+            if (initTokenCache)
+            {
+                db.CreateTableIfNotExists<UserAuthTokenCache>();
             }
         }
     }
