@@ -75,6 +75,7 @@ namespace ServiceStack.Azure.Auth
 
         public Func<IServiceBase, Authenticate, IAuthSession, ApplicationRegistration> CustomConsentRequestedHandler { get; set; }
         public Action<IServiceBase, IAuthSession> OnConsentGranted { get; set; }
+        public Action<IServiceBase, IAuthSession, Authenticate> OnAuthenticationRequested { get; set; }
         #endregion
 
         #region Public/Internal
@@ -105,6 +106,8 @@ namespace ServiceStack.Azure.Auth
             var userSession = session as AuthUserSession;
             if (userSession == null)
                 throw new NotSupportedException("Concrete dependence on AuthUserSession because of State property");
+
+            OnAuthenticationRequested?.Invoke(authService, session, request);
 
             if (string.Compare(query["request_consent"], "true", StringComparison.OrdinalIgnoreCase) == 0)
             {
