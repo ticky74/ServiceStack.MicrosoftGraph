@@ -180,11 +180,12 @@ namespace ServiceStack.Azure.Auth
                 var accessToken = authInfo["access_token"];
 
                 var meData = _graphService.Me(accessToken);
-                tokens.FirstName = meData.FirstName;
-                tokens.LastName = meData.LastName;
-                tokens.Email = meData.Email;
-                tokens.Language = meData.Language;
-                tokens.PhoneNumber = meData.PhoneNumber;
+                tokens.FirstName = meData.GivenName;
+                tokens.LastName = meData.Surname;
+                tokens.Email = meData.Mail;
+                tokens.Language = meData.PreferredLanguage;
+                tokens.PhoneNumber = meData.MobilePhone;
+                tokens.UserId = meData.Id;
 
                 var groups = _graphService.GetMemberGroups(accessToken);
                 tokens.Items["security-groups"] = JsonSerializer.SerializeToString(groups);

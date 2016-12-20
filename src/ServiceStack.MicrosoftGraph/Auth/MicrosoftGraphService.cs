@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ServiceStack.MicrosoftGraph.ServiceModel.Entities;
 using ServiceStack.MicrosoftGraph.ServiceModel.Interfaces;
 using ServiceStack.MicrosoftGraph.ServiceModel.Requests;
@@ -25,25 +27,51 @@ namespace ServiceStack.Azure.Auth
             return JsonSerializer.DeserializeFromString<string[]>(groups);
         }
 
-        public Me Me(string authToken)
+        public AzureUserObject Me(string authToken)
         {
             var azureReq = MsGraph.MeUrl.GetStringFromUrl(
                 requestFilter: req => { req.AddBearerToken(authToken); });
+            var respData = JsonSerializer.DeserializeFromString<GraphResponse<AzureUserObject>>(azureReq);
+            return respData.Value;
 
-            var meInfo = JsonObject.Parse(azureReq);
-            var meInfoNvc = meInfo.ToNameValueCollection();
-            var me = new Me
-            {
-                Email = meInfoNvc["mail"],
-                FirstName = meInfoNvc["givenName"],
-                LastName = meInfoNvc["surname"],
-                Language = meInfoNvc["preferredLanguage"],
-                PhoneNumber = meInfoNvc["mobilePhone"]
-            };
-
-            return me;
+//            var meInfo = JsonObject.Parse(azureReq);
+//            var meInfoNvc = meInfo.ToNameValueCollection();
+//            var me = new Me
+//            {
+//                Email = meInfoNvc["mail"],
+//                FirstName = meInfoNvc["givenName"],
+//                LastName = meInfoNvc["surname"],
+//                Language = meInfoNvc["preferredLanguage"],
+//                PhoneNumber = meInfoNvc["mobilePhone"]
+//            };
+//
+//            return me;
         }
-        
+
+        public async Task<AzureUserObject> MeAsync(string authToken)
+        {
+            var azureReq = await MsGraph.MeUrl.GetStringFromUrlAsync(
+                requestFilter: req => { req.AddBearerToken(authToken); });
+            var respData = JsonSerializer.DeserializeFromString<GraphResponse<AzureUserObject>>(azureReq);
+            return respData.Value;
+        }
+
+        public AzureUserObject[] Users(string authToken)
+        {
+            var azureResponse = MsGraph.DirectoryUsersUrl.GetStringFromUrl(
+                requestFilter: req => { req.AddBearerToken(authToken); });
+            var respData = JsonSerializer.DeserializeFromString<GraphResponse<AzureUserObject[]>>(azureResponse);
+            return respData.Value;
+        }
+
+        public async Task<AzureUserObject[]> UsersAsync(string authToken)
+        {
+            var azureResponse = await MsGraph.DirectoryUsersUrl.GetStringFromUrlAsync(
+                requestFilter: req => { req.AddBearerToken(authToken); });
+            var respData = JsonSerializer.DeserializeFromString<GraphResponse<AzureUserObject[]>>(azureResponse);
+            return respData.Value;
+        }
+
 
         public AuthCodeRequestData RequestConsentCode(AuthCodeRequest codeRequest)
         {

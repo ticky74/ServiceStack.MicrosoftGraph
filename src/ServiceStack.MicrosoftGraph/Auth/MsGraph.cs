@@ -21,6 +21,7 @@ namespace ServiceStack.Azure.Auth
         public const string Realm = "https://login.microsoftonline.com/";
 
         public const string MeUrl = "https://graph.microsoft.com/v1.0/me";
+        public const string DirectoryUsersUrl = "https://graph.microsoft.com/v1.0/users/";
 
         #endregion
 
