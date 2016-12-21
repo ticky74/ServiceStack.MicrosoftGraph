@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using ServiceStack.MicrosoftGraph.ServiceModel.Entities;
+using ServiceStack.Text;
 
 namespace ServiceStack.Azure
 {
@@ -14,5 +16,16 @@ namespace ServiceStack.Azure
 
         [DataMember(Name="value")]
         public T Value { get; set; }
+
+        public static GraphResponse<T> Parse(string responseData)
+        {
+            if (string.IsNullOrWhiteSpace(responseData))
+                return new GraphResponse<T>
+                {
+                    Value = default(T)
+                };
+
+            return JsonSerializer.DeserializeFromString<GraphResponse<T>>(responseData);
+        }
     }
 }

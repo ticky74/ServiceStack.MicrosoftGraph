@@ -16,6 +16,10 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Interfaces
         TokenResponse RequestAuthToken(AuthTokenRequest tokenRequest);
         AzureUserObject[] Users(string authToken);
         Task<AzureUserObject[]> UsersAsync(string authToken);
+        AzureGroupObject GetGroupByName(string authToken, string groupName);
+        Task<AzureGroupObject> GetGroupByNameAsync(string authToken, string groupName);
+        AzureUserObject[] UsersByGroup(string authToken, string groupName);
+        Task<AzureUserObject[]> UsersByGroupAsync(string authToken, string groupName);
 
         #endregion
     }

@@ -72,6 +72,40 @@ namespace ServiceStack.Azure.Auth
             return respData.Value;
         }
 
+        public async Task<AzureUserObject[]> UsersByGroupAsync(string authToken, string groupName)
+        {
+            var grp = await GetGroupByNameAsync(authToken, groupName);
+            if (grp == null)
+                return new AzureUserObject[0];
+
+            var data = await MsGraph.GetMembersByGroupUrl(grp.Id).GetStringFromUrlAsync(
+                requestFilter: req => { req.AddBearerToken(authToken); }); 
+            var usrs = GraphResponse<AzureUserObject[]>.Parse(data);
+            return usrs.Value;
+        }
+
+        public AzureUserObject[] UsersByGroup(string authToken, string groupName)
+        {
+            var grp = GetGroupByName(authToken, groupName);
+            if (grp == null)
+                return new AzureUserObject[0];
+
+            //var data = MsGraph.GetMembersByGroupUrl(grp.Id);
+            var usrs = ExecuteGet<AzureUserObject[]>(authToken, MsGraph.GetMembersByGroupUrl(grp.Id)); // GraphResponse<AzureUserObject[]>.Parse(data);
+            return usrs.Value;
+        }
+
+        public AzureGroupObject GetGroupByName(string authToken, string groupName)
+        {
+            var grp = ExecuteGet<AzureGroupObject[]>(authToken, MsGraph.GetGroupObjectByNameUrl(groupName));
+            return (grp.Value == null || grp.Value.Length == 0) ? null : grp.Value[0];
+        }
+
+        public async Task<AzureGroupObject> GetGroupByNameAsync(string authToken, string groupName)
+        {
+            var grp = await ExecuteGetAsync<AzureGroupObject[]>(authToken, MsGraph.GetGroupObjectByNameUrl(groupName));
+            return (grp.Value == null || grp.Value.Length == 0) ? null : grp.Value[0];
+        }
 
         public AuthCodeRequestData RequestConsentCode(AuthCodeRequest codeRequest)
         {
@@ -136,7 +170,32 @@ namespace ServiceStack.Azure.Auth
         #endregion
 
         #region Private
+        
+        private static GraphResponse<TReturn> ExecuteGet<TReturn>(string authToken, string reqUrl)
+        {
+            if (string.IsNullOrWhiteSpace(reqUrl))
+                return new GraphResponse<TReturn>
+                {
+                    Value = default(TReturn)
+                };
 
+            var data = reqUrl.GetStringFromUrl(
+                requestFilter: req => { req.AddBearerToken(authToken); });
+            return GraphResponse<TReturn>.Parse(data);
+        }
+
+        private static async Task<GraphResponse<TReturn>> ExecuteGetAsync<TReturn>(string authToken, string reqUrl)
+        {
+            if (string.IsNullOrWhiteSpace(reqUrl))
+                return new GraphResponse<TReturn>
+                {
+                    Value = default(TReturn)
+                };
+
+            var data = await reqUrl.GetStringFromUrlAsync(
+                requestFilter: req => { req.AddBearerToken(authToken); });
+            return GraphResponse<TReturn>.Parse(data);
+        }
         private string BuildScopesFragment(string[] scopes)
         {
             return scopes.Select(

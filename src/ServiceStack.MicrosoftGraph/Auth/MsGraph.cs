@@ -11,6 +11,8 @@ namespace ServiceStack.Azure.Auth
 
         public const string GraphUrl = "https://graph.microsoft.com";
 
+        public const string BaseUrl = "https://graph.microsoft.com/v1.0";
+
         public const string AuthorizationUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize";
 
         public const string ConsentUrl =
@@ -27,6 +29,15 @@ namespace ServiceStack.Azure.Auth
 
         #region Public/Internal
 
+        public static string GetMembersByGroupUrl(string groupId)
+        {
+            return $"{BaseUrl}/groups/{groupId}/members";
+        }
+        public static string GetGroupObjectByNameUrl(string groupName)
+        {
+            return
+                $"{BaseUrl}/groups?$filter=groupTypes/any(c:c+eq+\'Unified\') and (displayName eq \'{groupName}\')";
+        }
         public static string GetRefreshTokenUrl(string redirectUri, string clientSecret, string refreshToken)
         {
             return $"{TokenUrl}?grant_type=refresh_token&redirect_uri={redirectUri}&client_secret={clientSecret}&refresh_token={refreshToken}&resource=&resource=https%3A%2F%2Fgraph.microsoft.com%2F";
