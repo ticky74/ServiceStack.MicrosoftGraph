@@ -162,6 +162,9 @@ namespace ServiceStack.Azure.Auth
                 id = registration.Id;
             }
 
+            _cacheClient.RemoveAll(registration.Upns.Where(x => !string.IsNullOrWhiteSpace(x.Suffix))
+                .Select(x => x.Suffix.ToLower()));
+
             return ApplicationById(id);
         }
 
