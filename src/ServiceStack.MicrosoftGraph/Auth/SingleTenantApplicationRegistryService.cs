@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ServiceStack.MicrosoftGraph.ServiceModel.Entities;
 using ServiceStack.MicrosoftGraph.ServiceModel.Interfaces;
 
@@ -85,6 +86,19 @@ namespace ServiceStack.Azure.Auth
         public ApplicationRegistration RegisterApplication(ApplicationRegistration registration)
         {
             throw new NotImplementedException("Cannot override configured application registration");
+        }
+
+        public ApplicationRegistration RegisterUpns(ApplicationRegistration registration, IEnumerable<string> upns)
+        {
+            var distinct = upns.Where(x => !_registration.Upns?.Select(y => y.Suffix).Contains(x) == true)
+                            .Select(x => new DirectoryUpn
+                {
+                    ApplicationRegistrationId = _registration.Id,
+                    DateCreatedUtc = DateTimeOffset.UtcNow,
+                    Suffix = x
+                });
+            _registration.Upns.AddRange(distinct);
+            return _registration;
         }
 
         public ApplicationRegistration RegisterApplication(string applicationid, string publicKey, string directoryName,

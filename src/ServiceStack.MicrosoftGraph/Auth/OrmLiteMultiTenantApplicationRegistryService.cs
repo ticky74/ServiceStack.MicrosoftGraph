@@ -125,6 +125,36 @@ namespace ServiceStack.Azure.Auth
             return ApplicationById(dirLookup.RegistryId);
         }
 
+        public ApplicationRegistration RegisterUpns(ApplicationRegistration registration, IEnumerable<string> upns)
+        {
+            if (registration == null)
+                throw new ArgumentException($"Cannot update null or empty {nameof(ApplicationRegistration)}.");
+
+            var utcNow = DateTimeOffset.UtcNow;
+            var existing = registration.Upns?.Select(x => x.Suffix.ToLower());
+            var unique = upns.Where(x => !string.IsNullOrWhiteSpace(x)
+                                         && !existing.Contains(x))
+                .Select(x => new DirectoryUpn
+                {
+                    ApplicationRegistrationId = registration.Id,
+                    DateCreatedUtc = utcNow,
+                    Suffix = x.ToLower()
+                });
+
+            using (var db = _connectionFactory.OpenDbConnection())
+            {
+                db.InsertAll(unique);
+
+                _cacheClient.RemoveAll(existing.Select(x => UrnId.Create(typeof(DirectoryRegistrationLookup), x)));
+                _cacheClient.Remove(UrnId.Create(typeof(ApplicationRegistration), registration.Id.ToString()));
+
+                // Return uncached version to avoid possible race returning invalid cached data.
+                var q = db.From<ApplicationRegistration>()
+                    .Where(x => x.Id == registration.Id);
+                return db.LoadSelect(q).FirstOrDefault();
+            }
+        }
+
         public ApplicationRegistration RegisterApplication(ApplicationRegistration registration)
         {
             if (registration == null)
