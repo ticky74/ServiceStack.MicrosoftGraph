@@ -50,6 +50,8 @@ namespace ServiceStack.Azure.Auth
             };
         }
 
+
+
         #endregion
     }
 }

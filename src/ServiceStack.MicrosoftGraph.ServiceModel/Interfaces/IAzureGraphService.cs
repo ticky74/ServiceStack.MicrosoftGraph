@@ -9,6 +9,7 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Interfaces
         #region  Abstract
 
         string[] GetMemberGroups(string authToken);
+        string Logout(string clientId, string redirectUrl);
         AzureUserObject Me(string authToken);
         Task<AzureUserObject> MeAsync(string authToken);
         AuthCodeRequestData RequestAuthCode(AuthCodeRequest codeRequest);

@@ -43,11 +43,7 @@ namespace ServiceStack.Azure.Auth
             // Default Scopes. Not sure if this is a bad idea @ticky74
             Scopes = new[] {"User.Read", "offline_access", "openid", "profile"};
             _graphService = graphService ?? new MicrosoftGraphService();
-            AppSettings = settings;
-
-//            if (ServiceStackHost.Instance == null) return;
-//            if (ServiceStackHost.Instance.TryResolve<MicrosoftGraphAuthService>() == null)
-//                RegisterProviderSupportServices(ServiceStackHost.Instance);
+            AppSettings = settings;            
         }
 
         #endregion
@@ -75,7 +71,7 @@ namespace ServiceStack.Azure.Auth
 
         public Func<IServiceBase, Authenticate, IAuthSession, ApplicationRegistration> CustomConsentRequestedHandler { get; set; }
         public Action<IServiceBase, IAuthSession> OnConsentGranted { get; set; }
-        public Action<IServiceBase, IAuthSession, Authenticate> OnAuthenticationRequested { get; set; }
+        public Func<IServiceBase, IAuthSession, Authenticate, NameValueCollection, bool> OnAuthenticationRequested { get; set; }
         #endregion
 
         #region Public/Internal
@@ -107,8 +103,6 @@ namespace ServiceStack.Azure.Auth
             if (userSession == null)
                 throw new NotSupportedException("Concrete dependence on AuthUserSession because of State property");
 
-            OnAuthenticationRequested?.Invoke(authService, session, request);
-
             if (string.Compare(query["request_consent"], "true", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 var registration = CustomConsentRequestedHandler != null ? CustomConsentRequestedHandler(authService, request, session) 
@@ -128,6 +122,13 @@ namespace ServiceStack.Azure.Auth
             var code = query["code"];
             if (code.IsNullOrEmpty())
             {
+                var isValidAuthRequest = OnAuthenticationRequested?.Invoke(authService, session, request, query);
+                if (OnAuthenticationRequested != null && isValidAuthRequest == false)
+                {
+                    var result = RedirectDueToFailure(authService, session, query);
+                    return result;
+                }
+
                 // TODO: ONLY ALLOW AUTHENTICATION TO CONSENTED DIRECTORIES
                 return RequestCode(authService, request, session, userSession, tokens);
             }
@@ -149,7 +150,7 @@ namespace ServiceStack.Azure.Auth
             var registration = appRegistry.GetApplicationByDirectoryName(appDirectory);
             return registration;
         }
-
+        
         public override object Logout(IServiceBase service, Authenticate request)
         {
             var redirect = RedirectToMicrosoftLogout(service);
@@ -159,7 +160,9 @@ namespace ServiceStack.Azure.Auth
 
         public IHttpResult RedirectToMicrosoftLogout(IServiceBase authService)
         {
-            var tokens = authService.GetSession()
+            var session = authService.GetSession();
+
+            var tokens = session
                 .ProviderOAuthAccess.SingleOrDefault(a => a.Provider == MsGraph.ProviderName);
 
             var clientId = tokens?.Items["ClientId"];

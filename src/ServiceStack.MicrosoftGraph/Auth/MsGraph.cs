@@ -15,6 +15,8 @@ namespace ServiceStack.Azure.Auth
 
         public const string AuthorizationUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize";
 
+        public const string LogoutUrl = "https://login.windows.net/common/oauth2/logout";
+
         public const string ConsentUrl =
             "https://login.microsoftonline.com/{tenant name}/adminconsent?client_id={application id}&state={some state data}&redirect_uri={redirect uri}";
 
