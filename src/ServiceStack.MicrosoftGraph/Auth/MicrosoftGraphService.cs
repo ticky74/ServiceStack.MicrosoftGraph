@@ -131,17 +131,17 @@ namespace ServiceStack.Azure.Auth
             };
         }
 
-        public string Logout(string clientId, string redirectUrl)
+        public string GetLogoutUrl(string tenantId, string clientId, string redirectUrl)
         {
 
             if (string.IsNullOrWhiteSpace(clientId))
                 return null;
 
             // See https://msdn.microsoft.com/en-us/office/office365/howto/authentication-v2-protocols
-            var request = MsGraph.LogoutUrl + "?client_id={0}&post_logout_redirect_uri={1}"
-                              .Fmt(clientId, redirectUrl);
+//            var request = MsGraph.LogoutUrl + "?post_logout_redirect_uri={0}"
+//                              .Fmt(redirectUrl);
             // return authService.Redirect(LogoutUrlFilter(this, request));
-            return request;
+            return MsGraph.GetLogoutUrl(tenantId, clientId, redirectUrl);
         }
 
         public TokenResponse RequestAuthToken(AuthTokenRequest tokenRequest)
