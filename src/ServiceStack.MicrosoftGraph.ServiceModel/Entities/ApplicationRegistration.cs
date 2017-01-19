@@ -29,7 +29,7 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
         [Required]
         [StringLength(48)]
         [Index(Unique = true)]
-        public Guid AppTenantId { get; set; }
+        public string AppTenantKey { get; set; }
 
         public DateTimeOffset? ConstentDateUtc { get; set; }
 
