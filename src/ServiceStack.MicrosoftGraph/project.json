@@ -11,7 +11,9 @@
         "portable-net452+win81"
       ],
       "dependencies": {
-        "ServiceStack.MicrosoftGraph.ServiceModel": "1.0.0-*",
+        "ServiceStack.MicrosoftGraph.ServiceModel": {
+          "target": "project"
+        },
         "Microsoft.IdentityModel.Logging": "1.1.0",
         "ServiceStack.Server.Core": "1.0.30",
         "System.IdentityModel.Tokens.Jwt": "5.1.0",
@@ -24,7 +26,9 @@
         "portable-net45+win8"
       ],
       "dependencies": {
-        "ServiceStack.MicrosoftGraph.ServiceModel": "1.0.0-*",
+        "ServiceStack.MicrosoftGraph.ServiceModel": {
+          "target": "project"
+        },
         "Microsoft.IdentityModel.Logging": "1.1.0",
         "ServiceStack.Server.Core": "1.0.30",
         "System.IdentityModel.Tokens.Jwt": "5.1.0",
@@ -33,7 +37,9 @@
     },
     "net462": {
       "dependencies": {
-        "ServiceStack.MicrosoftGraph.ServiceModel": "1.0.0-*",
+        "ServiceStack.MicrosoftGraph.ServiceModel": {
+          "target": "project"
+        },
         "Microsoft.IdentityModel.Logging": "1.1.0",
         "System.IdentityModel.Tokens.Jwt": "5.1.0",
         "Microsoft.Net.Http": "2.2.29",
