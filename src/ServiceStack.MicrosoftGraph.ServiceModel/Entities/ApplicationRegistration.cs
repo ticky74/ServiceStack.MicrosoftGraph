@@ -31,6 +31,7 @@ namespace ServiceStack.MicrosoftGraph.ServiceModel.Entities
         [Index(Unique = true)]
         public string AppTenantKey { get; set; }
 
+
         public DateTimeOffset? ConstentDateUtc { get; set; }
 
         [Reference]
